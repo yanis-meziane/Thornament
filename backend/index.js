@@ -4,6 +4,7 @@ import cors from 'cors';
 // import authRoutes from './routes/authRoutes.js';
 // import objectRoutes from './routes/objectRoutes.js';
 import './db/db.js';
+import routes from './routes/routes.js'
 
 process.loadEnvFile(".env");
 
@@ -21,7 +22,7 @@ app.use(cors({
 // routes
 // app.use('/users', userRoutes);
 // app.use('/auth', authRoutes);
-// app.use('/objects', objectRoutes);
+app.use('/api', routes);
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
