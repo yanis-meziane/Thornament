@@ -47,3 +47,31 @@
     opacity: 0.7;
     transition: opacity 0.3s ease;
 }
+.btn-thornament {
+    padding: 0.5rem 1.2rem;
+    background-color: #9B9EF0;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 15px;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-thornament:hover {
+    background-color: #7B7ED0;
+}
+
+.user-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    color: #FFFFFF;
+}
+
+.user-icon:hover {
+    transform: scale(1.2);
+}

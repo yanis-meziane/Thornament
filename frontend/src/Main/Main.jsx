@@ -7,7 +7,7 @@ export default function Main() {
 
     return (
         <>
-            <Navbar title="Thornament" />
+            <Navbar title="Thornament" isConnected={true} />
             <Sidebar />
             <div className="main-container">
                 <h1>Bienvenue {userName}</h1>
