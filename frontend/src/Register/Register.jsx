@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import './Register.css';
 
 export default function Register(){
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [setError] = useState('');
-
-    const [mail] = useState('');
+    const [mail, setMail] = useState(''); 
+    const [error, setError] = useState(''); 
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -38,29 +38,57 @@ export default function Register(){
     };
 
     return(
-        <div>
-            <h1>Je suis la page register</h1>
-
-            <form onSubmit={handleSubmit}>
+        <div className="connexion-container ">
+            <form onSubmit={handleSubmit} id="formConnexion">
                 
                 <div id="divEmail">
-                    <label htmlFor="email">Email</label>
-                    <input type="email" name="email" id="email" placeholder="Email..." minLength={5} maxLength={50} />
+                    <label htmlFor="email">Email : </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="email" 
+                        placeholder="Email..." 
+                        minLength={5} 
+                        maxLength={50}
+                        value={mail}
+                        onChange={(e) => setMail(e.target.value)} 
+                    />
                 </div>
 
                 <div id="divPassword">
-                    <label htmlFor="password">Mot de passe</label>
-                    <input type="password" name="password" id="password" placeholder="Password..." minLength={8} maxLength={20} value={password} onChange={(e) => setPassword(e.target.value)}/>
+                    <label htmlFor="password">Mot de passe : </label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password" 
+                        placeholder="Password..." 
+                        minLength={8} 
+                        maxLength={20} 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
                 </div>
 
                 <div id="divConfirmPassword">
-                    <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-                    <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password..." minLength={8} maxLength={20} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
+                    <label htmlFor="confirmPassword">Confirmer le mot de passe : </label>
+                    <input 
+                        type="password" 
+                        name="confirmPassword" 
+                        id="confirmPassword" 
+                        placeholder="Confirm Password..." 
+                        minLength={8} 
+                        maxLength={20} 
+                        value={confirmPassword} 
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
                 </div>
-                <button type="submit">S'inscrire</button>
-            </form>
 
-            <p>Si vous avez déjà un compte, connectez-vous <Link to={'/Login'}>ici</Link></p>
+                {error && <p className="error-message">{error}</p>} 
+
+                <button type="submit" id="submitConnexion">S'inscrire</button>
+
+                <p>Si vous avez déjà un compte, connectez-vous <Link to={'/Login'}>ici</Link></p>
+            </form>
         </div>
     )
 }
