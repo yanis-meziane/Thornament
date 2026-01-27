@@ -56,6 +56,7 @@ export default function Login(){
     
     return(
         <div className="connexion-container">
+            <h1>Se connecter</h1>
             <form onSubmit={handleSubmit} id="formConnexion">
                 {error && <p className="error-message">{error}</p>}
                 {success && <p className="success-message">{success}</p>}
