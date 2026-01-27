@@ -9,7 +9,7 @@ export default function Tournois() {
 
     return (
         <>
-            <Navbar title="Vos Tournois" />
+            <Navbar title="Vos Tournois" isConnected={true} />
             <Sidebar />
             <div className="tournois-container">
                 <div className="tournois-content">
