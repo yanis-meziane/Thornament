@@ -42,16 +42,7 @@ export default function Register(){
             <h1>Je suis la page register</h1>
 
             <form onSubmit={handleSubmit}>
-                <div id="divFirstname">
-                    <label htmlFor="firstname">Prénom</label>
-                    <input type="text" placeholder="Firstname..." name="firstname" id="firstname" minLength={1} maxLength={50}/>
-                </div>
-
-                <div id="divLastname">
-                    <label htmlFor="lastname">Nom de famille</label>
-                    <input type="text" name="lastname" id="lastname" placeholder="Lastname..." minLength={1} maxLength={30} />
-                </div>
-
+                
                 <div id="divEmail">
                     <label htmlFor="email">Email</label>
                     <input type="email" name="email" id="email" placeholder="Email..." minLength={5} maxLength={50} />
