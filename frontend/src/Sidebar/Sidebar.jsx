@@ -29,6 +29,10 @@ export default function Sidebar() {
                         <li onClick={() => handleNavigate('/tournois')}>
                             Vos Tournois
                         </li>
+
+                        <li onClick={()=> handleNavigate('/')}>
+                            Se connecter / S'inscrire
+                        </li>
                     </ul>
                 </nav>
             )}
