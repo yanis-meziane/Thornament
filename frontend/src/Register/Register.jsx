@@ -39,6 +39,7 @@ export default function Register(){
 
     return(
         <div className="connexion-container ">
+            <h1>S'inscrire</h1>
             <form onSubmit={handleSubmit} id="formConnexion">
                 
                 <div id="divEmail">
