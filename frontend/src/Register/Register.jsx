@@ -6,6 +6,8 @@ export default function Register(){
     const [confirmPassword, setConfirmPassword] = useState('');
     const [setError] = useState('');
 
+    const [mail] = useState('');
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -22,6 +24,12 @@ export default function Register(){
 
         if(password !== confirmPassword){
             setError('Les mots de passe ne correspondent pas.');
+            return;
+        }
+
+        const mailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if(!mailRegex.test(mail)){
+            setError('L\'adresse email n\'est pas valide.');
             return;
         }
         
