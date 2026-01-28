@@ -1,5 +1,6 @@
-import crypt from "../services/hash.js";
+import { crypt, compare } from "../services/hash.js";
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 process.loadEnvFile("./.env");
 
@@ -10,6 +11,7 @@ const register = async (req, res, next) => {
 
     const authHeader = req.headers.authorization;
     if (authHeader) {
+      const token = authHeader.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       let user = decoded;
       role = "user";
@@ -18,13 +20,13 @@ const register = async (req, res, next) => {
     }
     
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+      return res.status(400).json({ message: 'Mail et Mot de passe nécessaire' });
     }
     
     let explodedPassword = password.split("");
 
-    if (explodedPassword.length<12){
-      error.push( "Password length must be more than 12");
+    if (explodedPassword.length < 8) {
+      error.push("Nécessité d'avoir un MDP d'au moins 8 caractères");
     }
 
     // test syntaxe (double it with a front test to prevent long computing time)
@@ -32,39 +34,39 @@ const register = async (req, res, next) => {
     let isMin = false;
     let isNum = false;
     let isSpe = false;
-    for (let i=0; i<explodedPassword.length; i++){
-      explodedPassword[i].match(/[A-Z]/) ? isMaj=true : isMaj=isMaj;
-      explodedPassword[i].match(/[a-z]/) ? isMin=true : isMin=isMin;
-      explodedPassword[i].match(/[0-9]/) ? isNum=true : isNum=isNum;
+    for (let i = 0; i < explodedPassword.length; i++) {
+      explodedPassword[i].match(/[A-Z]/) ? isMaj = true : isMaj = isMaj;
+      explodedPassword[i].match(/[a-z]/) ? isMin = true : isMin = isMin;
+      explodedPassword[i].match(/[0-9]/) ? isNum = true : isNum = isNum;
       // tests for !@#$%^&*()_+-=;:|,.<>?]
-      !explodedPassword[i].match(/[a-zA-Z0-9{}'"\\\/\[\]]/) ? isSpe=true : isSpe=isSpe;
+      !explodedPassword[i].match(/[a-zA-Z0-9{}'"\\\/\[\]]/) ? isSpe = true : isSpe = isSpe;
     }
     
-    if (!isMaj){
+    if (!isMaj) {
       error.push("Password must contain at least a majuscule");
     }
-    if (!isMin){
+    if (!isMin) {
       error.push("Password must contain at least a minuscule");
     }
-    if (!isNum){
+    if (!isNum) {
       error.push("Password must contain at least a number");
     }
-    if (!isSpe){
+    if (!isSpe) {
       error.push("Password must contain at least a special character");
     }
-    if (error.length>0){
+    if (error.length > 0) {
       let err = new Error(error);
       throw err;
     }
     
-    const cryptedPassword = crypt(password);
+    const cryptedPassword = await crypt(password);
     
     // Single insert, no session needed
     const newUser = await User.create({ userName, email, cryptedPassword, role });
     return res.status(201).json(newUser);
   } catch (err) {
     // Handle duplicate email
-    if (err.code === 11000) {
+    if (err.code === '23505') { // PostgreSQL unique violation
       return res.status(409).json({ message: 'Email already in use' });
     }
     
@@ -76,45 +78,40 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     
-    // if someone tries to connect with a less than 1 hour expired token :
-    if (req.headers.authorization) {
-      // let connection = await LastConnections
-      //   .findOne({token: crypt(req.headers.authorization)})
-      //   .sort({ created_at: -1 });
-
-      //   // 1 heure s'est écoulé || token expired et moins qu'une heure
-      // if (
-      //   (Date.now() - connection.created_at.getTime()) > 3600000 || 
-      //   ( connection.expired && Date.now() - connection.created_at.getTime() < 3600000 ) 
-      // ) {
-      //   throw new Error('Invalid token');
-      // }
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
     }
 
     // Find user
-    // const cryptedPassword = crypt(password);
-    // const user = await User.findOne({email: email, password: cryptedPassword});
+    const user = await User.findOne({ email });
     
     if (!user) {
-      throw new Error('Invalid credentials');
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Compare password
+    const isValidPassword = await compare(password, user.password);
+    
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const payload = {
-      id: user._id,
-      username: user.userName,
+      id: user.id,
+      username: user.user_name,
       role: user.role
     };
     
     // Sign token
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ message: 'Login successful', token, id: user._id, role: user.role });
-  } catch (err) {
-    if (err.message === 'Invalid credentials') return res.status(401).json({
-      error: err,
-      message: 'Invalid credentials'
+    res.json({ 
+      message: 'Login successful', 
+      token, 
+      id: user.id, 
+      role: user.role 
     });
-
+  } catch (err) {
     return res.status(500).send({
       error: err.message,
       message: 'Error during login'
@@ -124,28 +121,15 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    let cryptedToken = crypt(req.body.token);
-    // const connection = await LastConnections
-    // .findOneAndUpdate(
-    //   {token: cryptedToken},
-    //   {expired: true},
-    //   {sort: {created_at : -1}}
-    // );
-        
+    // Token invalidation could be handled here if needed
     res.json({ message: 'Logout successful' }); 
   } catch (err) {
-    if (err.message === 'Invalid credentials') return res.status(401).json({
-      error: err,
-      message: 'Invalid credentials'
-    });
-
     return res.status(500).send({
       error: err.message,
       message: 'Error during logout'
     });
   }
 };
-
 
 export default {
   register,
