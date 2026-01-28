@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 //import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import Sidebar from '../Sidebar/Sidebar';
@@ -9,6 +9,7 @@ export default function Tournois() {
     const [tournois, setTournois] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
     //const navigate = useNavigate();
 
     const TOURNOIS_ENDPOINTS = {
@@ -37,7 +38,8 @@ export default function Tournois() {
             'Authorization': `Bearer ${token}`
         };
     };
-    const fetchTournois = async () => {
+
+    const fetchTournois = useCallback(async () => {
         setLoading(true);
         setError('');
 
@@ -60,13 +62,20 @@ export default function Tournois() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        fetchTournois();
+    }, [fetchTournois]);
 
     //Création de tournois
-    const handleCreateTournoi = async () => {
+    const handleCreateTournament = async (tournamentName) => {
+        setIsModalOpen(false);
+        setLoading(true);
+        
         const requestBody = {
-            name: "Nouveau Tournoi",
-            description: "Description du tournoi",
+            name: tournamentName,
+            description: ""
         };
 
         try {
@@ -87,11 +96,13 @@ export default function Tournois() {
         } catch (error) {
             console.error('Erreur:', error);
             alert('Erreur de connexion au serveur');
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDeleteTournoi = async (tournoiId) => {
-        if (('Êtes-vous sûr de vouloir supprimer ce tournoi ?')) {
+        if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce tournoi ?')) {
             return;
         }
 
@@ -130,7 +141,7 @@ export default function Tournois() {
                     {!loading && tournois.length === 0 && (
                         <>
                             <p className="no-tournois">Vous n'avez aucun tournois pour l'instant</p>
-                            <button className="btn-create" onClick={handleCreateTournoi}>
+                            <button className="btn-create" onClick={() => setIsModalOpen(true)}>
                                 Créer un nouveau tournoi
                             </button>
                         </>
@@ -139,7 +150,7 @@ export default function Tournois() {
                     {!loading && tournois.length > 0 && (
                         <>
                             <h2>Vos Tournois ({tournois.length})</h2>
-                            <button className="btn-create" onClick={handleCreateTournoi}>
+                            <button className="btn-create" onClick={() => setIsModalOpen(true)}>
                                 Créer un nouveau tournoi
                             </button>
                             

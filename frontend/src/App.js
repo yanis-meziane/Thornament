@@ -4,6 +4,7 @@ import Register from './Register/Register'
 import Login from './Login/Login'
 import Main from './Main/Main'
 import Tournois from './Tournois/Tournois'
+import Tournament from './Tournament/Tournament'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path='/login' element={<Login />}/>
           <Route path='/home' element={<Main />}/>
           <Route path='/tournois' element={<Tournois />}/>
+          <Route path='/tournament' element={<Tournament />}/>
         </Routes>
       </BrowserRouter>
     </div>
