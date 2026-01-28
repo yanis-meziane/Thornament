@@ -23,9 +23,6 @@ export default function Sidebar() {
             {isOpen && (
                 <nav className="sidebar-nav">
                     <ul>
-                        <li onClick={() => handleNavigate('/competitions')}>
-                            Vos Compétitions
-                        </li>
                         <li onClick={() => handleNavigate('/tournois')}>
                             Vos Tournois
                         </li>

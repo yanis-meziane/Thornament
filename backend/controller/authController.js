@@ -1,26 +1,17 @@
 import { crypt, compare } from "../services/hash.js";
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import {registerRepository, loginRepository} from '../repositories/authRepositories.js'
 
 process.loadEnvFile("./.env");
 
 const register = async (req, res, next) => {
   try {
-    let { userName, email, password, role } = req.body;
+    let {mail, password} = req.body;
     let error = [];
-
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      let user = decoded;
-      role = "user";
-    } else {
-      role = "user";
-    }
     
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Mail et Mot de passe nécessaire' });
+    if (!mail || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
     }
     
     let explodedPassword = password.split("");
@@ -61,12 +52,12 @@ const register = async (req, res, next) => {
     
     const cryptedPassword = await crypt(password);
     
-    // Single insert, no session needed
-    const newUser = await User.create({ userName, email, cryptedPassword, role });
+    let newUser = await registerRepository(mail, cryptedPassword);
+
     return res.status(201).json(newUser);
   } catch (err) {
-    // Handle duplicate email
-    if (err.code === '23505') { // PostgreSQL unique violation
+    // Handle duplicate mail
+    if (err.code === 11000) {
       return res.status(409).json({ message: 'Email already in use' });
     }
     
@@ -76,41 +67,35 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { mail, password } = req.body;
     
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    // if someone tries to connect with a less than 1 hour expired token :
+    if (req.headers.authorization) {
+      throw new Error("already authenticated");
     }
 
     // Find user
-    const user = await User.findOne({ email });
-    
-    if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    const user = await loginRepository(mail)
 
-    // Compare password
-    const isValidPassword = await compare(password, user.password);
+    if (!user) {
+      throw new Error ("Invalid credentials");
+    }
     
-    if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+    const isValid = await bcrypt.compare(password, user.password);
+    
+    if (!isValid) {
+      throw new Error ("Invalid credentials");
     }
 
     const payload = {
       id: user.id,
-      username: user.user_name,
-      role: user.role
+      mail: user.mail
     };
     
     // Sign token
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ 
-      message: 'Login successful', 
-      token, 
-      id: user.id, 
-      role: user.role 
-    });
+    res.json({ message: 'Login successful', token, id: user._id});
   } catch (err) {
     return res.status(500).send({
       error: err.message,
@@ -121,7 +106,6 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    // Token invalidation could be handled here if needed
     res.json({ message: 'Logout successful' }); 
   } catch (err) {
     return res.status(500).send({

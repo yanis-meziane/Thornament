@@ -20,8 +20,6 @@ app.use(cors({
 }));
 
 // routes
-// app.use('/users', userRoutes);
-// app.use('/auth', authRoutes);
 app.use('/api', routes);
 
 app.listen(PORT, () => {
