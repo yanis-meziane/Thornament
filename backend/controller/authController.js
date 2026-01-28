@@ -1,23 +1,16 @@
 import crypt from "../services/hash.js";
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import {registerRepository, loginRepository} from '../repositories/authRepositories.js'
 
 process.loadEnvFile("./.env");
 
 const register = async (req, res, next) => {
   try {
-    let { userName, email, password, role } = req.body;
+    let {mail, password} = req.body;
     let error = [];
-
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      let user = decoded;
-      role = "user";
-    } else {
-      role = "user";
-    }
     
-    if (!email || !password) {
+    if (!mail || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
     }
     
@@ -57,13 +50,13 @@ const register = async (req, res, next) => {
       throw err;
     }
     
-    const cryptedPassword = crypt(password);
+    const cryptedPassword = await crypt(password);
     
-    // Single insert, no session needed
-    const newUser = await User.create({ userName, email, cryptedPassword, role });
+    let newUser = await registerRepository(mail, cryptedPassword);
+
     return res.status(201).json(newUser);
   } catch (err) {
-    // Handle duplicate email
+    // Handle duplicate mail
     if (err.code === 11000) {
       return res.status(409).json({ message: 'Email already in use' });
     }
@@ -74,41 +67,35 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { mail, password } = req.body;
     
     // if someone tries to connect with a less than 1 hour expired token :
     if (req.headers.authorization) {
-      // let connection = await LastConnections
-      //   .findOne({token: crypt(req.headers.authorization)})
-      //   .sort({ created_at: -1 });
-
-      //   // 1 heure s'est écoulé || token expired et moins qu'une heure
-      // if (
-      //   (Date.now() - connection.created_at.getTime()) > 3600000 || 
-      //   ( connection.expired && Date.now() - connection.created_at.getTime() < 3600000 ) 
-      // ) {
-      //   throw new Error('Invalid token');
-      // }
+      throw new Error("already authenticated");
     }
 
     // Find user
-    // const cryptedPassword = crypt(password);
-    // const user = await User.findOne({email: email, password: cryptedPassword});
-    
+    const user = await loginRepository(mail)
+
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error ("Invalid credentials");
+    }
+    
+    const isValid = await bcrypt.compare(password, user.password);
+    
+    if (!isValid) {
+      throw new Error ("Invalid credentials");
     }
 
     const payload = {
-      id: user._id,
-      username: user.userName,
-      role: user.role
+      id: user.id,
+      mail: user.mail
     };
     
     // Sign token
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ message: 'Login successful', token, id: user._id, role: user.role });
+    res.json({ message: 'Login successful', token, id: user._id});
   } catch (err) {
     if (err.message === 'Invalid credentials') return res.status(401).json({
       error: err,
@@ -124,14 +111,6 @@ const login = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    let cryptedToken = crypt(req.body.token);
-    // const connection = await LastConnections
-    // .findOneAndUpdate(
-    //   {token: cryptedToken},
-    //   {expired: true},
-    //   {sort: {created_at : -1}}
-    // );
-        
     res.json({ message: 'Logout successful' }); 
   } catch (err) {
     if (err.message === 'Invalid credentials') return res.status(401).json({
