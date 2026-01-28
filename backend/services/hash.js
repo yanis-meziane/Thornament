@@ -1,7 +1,11 @@
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
-export default async function crypt(value) {
-  const saltRounds = 10;
-  const hash = await bcrypt.hash(value, saltRounds);
-  return hash;
-}
+const SALT_ROUNDS = 10;
+
+export const crypt = async (value) => {
+  return bcrypt.hash(value, SALT_ROUNDS);
+};
+
+export const compare = async (value, hash) => {
+  return bcrypt.compare(value, hash);
+};

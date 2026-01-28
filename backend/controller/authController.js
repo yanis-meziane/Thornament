@@ -1,122 +1,108 @@
-import crypt from "../services/hash.js";
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import {registerRepository, loginRepository} from '../repositories/authRepositories.js'
+import { crypt, compare } from "../services/hash.js";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-process.loadEnvFile("./.env");
+process.loadEnvFile(".env");
 
-const register = async (req, res, next) => {
+const register = async (req, res) => {
   try {
-    let {mail, password} = req.body;
-    let error = [];
-    
-    if (!mail || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    const { email, password } = req.body;
+
+    const error = [];
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Mail et Mot de passe nécessaire" });
     }
-    
-    let explodedPassword = password.split("");
+
+    const explodedPassword = password.split("");
 
     if (explodedPassword.length < 8) {
       error.push("Nécessité d'avoir un MDP d'au moins 8 caractères");
     }
 
-    // test syntaxe (double it with a front test to prevent long computing time)
     let isMaj = false;
     let isMin = false;
     let isNum = false;
     let isSpe = false;
-    for (let i = 0; i < explodedPassword.length; i++) {
-      explodedPassword[i].match(/[A-Z]/) ? isMaj = true : isMaj = isMaj;
-      explodedPassword[i].match(/[a-z]/) ? isMin = true : isMin = isMin;
-      explodedPassword[i].match(/[0-9]/) ? isNum = true : isNum = isNum;
-      // tests for !@#$%^&*()_+-=;:|,.<>?]
-      !explodedPassword[i].match(/[a-zA-Z0-9{}'"\\\/\[\]]/) ? isSpe = true : isSpe = isSpe;
-    }
-    
-    if (!isMaj) {
-      error.push("Password must contain at least a majuscule");
-    }
-    if (!isMin) {
-      error.push("Password must contain at least a minuscule");
-    }
-    if (!isNum) {
-      error.push("Password must contain at least a number");
-    }
-    if (!isSpe) {
-      error.push("Password must contain at least a special character");
-    }
-    if (error.length > 0) {
-      let err = new Error(error);
-      throw err;
-    }
-    
-    const cryptedPassword = await crypt(password);
-    
-    let newUser = await registerRepository(mail, cryptedPassword);
 
-    return res.status(201).json(newUser);
-  } catch (err) {
-    // Handle duplicate mail
-    if (err.code === 11000) {
-      return res.status(409).json({ message: 'Email already in use' });
+    for (let i = 0; i < explodedPassword.length; i++) {
+      explodedPassword[i].match(/[A-Z]/) ? (isMaj = true) : isMaj;
+      explodedPassword[i].match(/[a-z]/) ? (isMin = true) : isMin;
+      explodedPassword[i].match(/[0-9]/) ? (isNum = true) : isNum;
+      !explodedPassword[i].match(/[a-zA-Z0-9{}'"\\\/\[\]]/) ? (isSpe = true) : isSpe;
     }
-    
+
+    if (!isMaj) error.push("Password must contain at least a majuscule");
+    if (!isMin) error.push("Password must contain at least a minuscule");
+    if (!isNum) error.push("Password must contain at least a number");
+    if (!isSpe) error.push("Password must contain at least a special character");
+
+    if (error.length > 0) {
+      return res.status(400).json({ message: error });
+    }
+
+    const hashedPassword = await crypt(password);
+
+    // Table users: mail, password
+    const newUser = await User.create({ email, hashedPassword });
+
+    // on renvoie un user "safe" (sans password)
+    return res.status(201).json({ id: newUser.id, mail: newUser.mail });
+  } catch (err) {
+    // PostgreSQL unique violation (mail unique)
+    if (err.code === "23505") {
+      return res.status(409).json({ message: "Email already in use" });
+    }
     return res.status(500).json({ error: err?.message || err });
   }
 };
 
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   try {
-    const { mail, password } = req.body;
-    
-    // if someone tries to connect with a less than 1 hour expired token :
-    if (req.headers.authorization) {
-      throw new Error("already authenticated");
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // Find user
-    const user = await loginRepository(mail)
+    const user = await User.findOne({ email });
 
     if (!user) {
-      throw new Error ("Invalid credentials");
-    }
-    
-    const isValid = await bcrypt.compare(password, user.password);
-    
-    if (!isValid) {
-      throw new Error ("Invalid credentials");
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const payload = {
+    const isValidPassword = await compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const payload = { id: user.id, email: user.mail };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    return res.json({
+      message: "Login successful",
+      token,
       id: user.id,
-      mail: user.mail
-    };
-    
-    // Sign token
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({ message: 'Login successful', token, id: user._id});
+    });
   } catch (err) {
-    return res.status(500).send({
-      error: err.message,
-      message: 'Error during login'
+    return res.status(500).json({
+      error: err?.message || err,
+      message: "Error during login",
     });
   }
 };
 
-const logout = async (req, res, next) => {
+const logout = async (req, res) => {
   try {
-    res.json({ message: 'Logout successful' }); 
+    return res.json({ message: "Logout successful" });
   } catch (err) {
-    return res.status(500).send({
-      error: err.message,
-      message: 'Error during logout'
+    return res.status(500).json({
+      error: err?.message || err,
+      message: "Error during logout",
     });
   }
 };
 
-export default {
-  register,
-  login,
-  logout
-}
+export default { register, login, logout };
