@@ -7,7 +7,6 @@ import './Tournois.css';
 
 export default function Tournois() {
     const [tournois, setTournois] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     //const navigate = useNavigate();
@@ -40,7 +39,6 @@ export default function Tournois() {
     };
 
     const fetchTournois = useCallback(async () => {
-        setLoading(true);
         setError('');
 
         try {
@@ -59,8 +57,6 @@ export default function Tournois() {
         } catch (error) {
             console.error('Erreur:', error);
             setError('Erreur de connexion au serveur');
-        } finally {
-            setLoading(false);
         }
     }, []);
 
@@ -71,7 +67,7 @@ export default function Tournois() {
     //Création de tournois
     const handleCreateTournament = async (tournamentName) => {
         setIsModalOpen(false);
-        setLoading(true);
+
         
         const requestBody = {
             name: tournamentName,
@@ -96,8 +92,6 @@ export default function Tournois() {
         } catch (error) {
             console.error('Erreur:', error);
             alert('Erreur de connexion au serveur');
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -135,24 +129,15 @@ export default function Tournois() {
             <Sidebar />
             <div className="tournois-container">
                 <div className="tournois-content">
-                    {loading && <p>Chargement...</p>}
+                   
                     {error && <p className="error-message">{error}</p>}
-                    
-                    {!loading && tournois.length === 0 && (
-                        <>
                             <p className="no-tournois">Vous n'avez aucun tournois pour l'instant</p>
                             <button className="btn-create" onClick={() => setIsModalOpen(true)}>
                                 Créer un nouveau tournoi
                             </button>
-                        </>
-                    )}
-
-                    {!loading && tournois.length > 0 && (
-                        <>
+                      
                             <h2>Vos Tournois ({tournois.length})</h2>
-                            <button className="btn-create" onClick={() => setIsModalOpen(true)}>
-                                Créer un nouveau tournoi
-                            </button>
+                            
                             
                             <div className="tournois-list">
                                 {tournois.map((tournoi) => (
@@ -168,8 +153,6 @@ export default function Tournois() {
                                     </div>
                                 ))}
                             </div>
-                        </>
-                    )}
                 </div>
             </div>
             
