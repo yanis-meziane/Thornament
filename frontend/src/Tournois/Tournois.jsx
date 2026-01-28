@@ -5,30 +5,30 @@ import Sidebar from '../Sidebar/Sidebar';
 import CreateTournamentModal from '../Tournament/CreateTournamentModal';
 import './Tournois.css';
 
+const TOURNOIS_ENDPOINTS = {
+    getAll: {
+        url: 'http://localhost:3001/api/tournois',
+        method: 'GET'
+    },
+    create: {
+        url: 'http://localhost:3001/api/tournois',
+        method: 'POST'
+    },
+    getById: {
+        url: 'http://localhost:3001/api/tournois/:id', 
+        method: 'GET'
+    },
+    delete: {
+        url: 'http://localhost:3001/api/tournois/:id', 
+        method: 'DELETE'
+    }
+};
+
 export default function Tournois() {
     const [tournois, setTournois] = useState([]);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     //const navigate = useNavigate();
-
-    const TOURNOIS_ENDPOINTS = {
-        getAll: {
-            url: 'http://localhost:3001/api/tournois',
-            method: 'GET'
-        },
-        create: {
-            url: 'http://localhost:3001/api/tournois',
-            method: 'POST'
-        },
-        getById: {
-            url: 'http://localhost:3001/api/tournois/:id', 
-            method: 'GET'
-        },
-        delete: {
-            url: 'http://localhost:3001/api/tournois/:id', 
-            method: 'DELETE'
-        }
-    };
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
