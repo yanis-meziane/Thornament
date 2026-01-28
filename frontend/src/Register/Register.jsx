@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import './Register.css';
 
@@ -6,41 +6,80 @@ export default function Register(){
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [mail, setMail] = useState(''); 
-    const [error, setError] = useState(''); 
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const REGISTER_ENDPOINT = {
+        url: 'http://localhost:3001/api/auth/register',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        setSuccess('');
 
-        if(password.length < 8){
+        if (password.length < 8) {
             setError('Le mot de passe doit contenir au minimum 8 caractères.');
             return;
         }
 
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@_\-$!*%&]).{8,}$/;
-        if(!passwordRegex.test(password)){
-            setError('Le mot de passe est trop faible ! Il est nécessaire d\'avoir au minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@_\-$!*%&]).{12,}$/;
+        if (!passwordRegex.test(password)) {
+            setError('Le mot de passe est trop faible ! Il est nécessaire d\'avoir au minimum 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.');
             return;
         }
 
-        if(password !== confirmPassword){
+        if (password !== confirmPassword) {
             setError('Les mots de passe ne correspondent pas.');
             return;
         }
 
         const mailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if(!mailRegex.test(mail)){
+        if (!mailRegex.test(mail)) {
             setError('L\'adresse email n\'est pas valide.');
             return;
         }
-        
-        setError('');
-        alert("Inscription réussie !");
+
+        const requestBody = {
+            email: mail,
+            password: password
+        };
+
+        try {
+            const response = await fetch(REGISTER_ENDPOINT.url, {
+                method: REGISTER_ENDPOINT.method,
+                headers: REGISTER_ENDPOINT.headers,
+                body: JSON.stringify(requestBody)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setSuccess('Inscription réussie ! Redirection...');
+                setTimeout(() => {
+                    navigate('/login');
+                }, 1500);
+            } else {
+                setError(data.message || 'Erreur lors de l\'inscription');
+            }
+
+        } catch (error) {
+            console.error('Erreur:', error);
+            setError('Erreur de connexion au serveur');
+        }
     };
 
     return(
         <div className="connexion-container ">
             <h1>S'inscrire</h1>
             <form onSubmit={handleSubmit} id="formConnexion">
+                {error && <p className="error-message" style={{color: 'red'}}>{error}</p>}
+                {success && <p className="success-message" style={{color: 'green'}}>{success}</p>}
                 
                 <div id="divEmail">
                     <label htmlFor="email">Email : </label>
@@ -52,7 +91,8 @@ export default function Register(){
                         minLength={5} 
                         maxLength={50}
                         value={mail}
-                        onChange={(e) => setMail(e.target.value)} 
+                        onChange={(e) => setMail(e.target.value)}
+                        required
                     />
                 </div>
 
@@ -63,10 +103,11 @@ export default function Register(){
                         name="password" 
                         id="password" 
                         placeholder="Password..." 
-                        minLength={8} 
+                        minLength={12} 
                         maxLength={20} 
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                 </div>
 
@@ -77,14 +118,13 @@ export default function Register(){
                         name="confirmPassword" 
                         id="confirmPassword" 
                         placeholder="Confirm Password..." 
-                        minLength={8} 
+                        minLength={12} 
                         maxLength={20} 
                         value={confirmPassword} 
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
                     />
                 </div>
-
-                {error && <p className="error-message">{error}</p>} 
 
                 <button type="submit" id="submitConnexion">S'inscrire</button>
 

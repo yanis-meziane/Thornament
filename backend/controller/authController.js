@@ -1,6 +1,6 @@
-import crypt from "../services/hash.js";
-import bcrypt from 'bcrypt';
+import { crypt, compare } from "../services/hash.js";
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 import {registerRepository, loginRepository} from '../repositories/authRepositories.js'
 
 process.loadEnvFile("./.env");
@@ -16,8 +16,8 @@ const register = async (req, res, next) => {
     
     let explodedPassword = password.split("");
 
-    if (explodedPassword.length<12){
-      error.push( "Password length must be more than 12");
+    if (explodedPassword.length < 8) {
+      error.push("Nécessité d'avoir un MDP d'au moins 8 caractères");
     }
 
     // test syntaxe (double it with a front test to prevent long computing time)
@@ -25,27 +25,27 @@ const register = async (req, res, next) => {
     let isMin = false;
     let isNum = false;
     let isSpe = false;
-    for (let i=0; i<explodedPassword.length; i++){
-      explodedPassword[i].match(/[A-Z]/) ? isMaj=true : isMaj=isMaj;
-      explodedPassword[i].match(/[a-z]/) ? isMin=true : isMin=isMin;
-      explodedPassword[i].match(/[0-9]/) ? isNum=true : isNum=isNum;
+    for (let i = 0; i < explodedPassword.length; i++) {
+      explodedPassword[i].match(/[A-Z]/) ? isMaj = true : isMaj = isMaj;
+      explodedPassword[i].match(/[a-z]/) ? isMin = true : isMin = isMin;
+      explodedPassword[i].match(/[0-9]/) ? isNum = true : isNum = isNum;
       // tests for !@#$%^&*()_+-=;:|,.<>?]
-      !explodedPassword[i].match(/[a-zA-Z0-9{}'"\\\/\[\]]/) ? isSpe=true : isSpe=isSpe;
+      !explodedPassword[i].match(/[a-zA-Z0-9{}'"\\\/\[\]]/) ? isSpe = true : isSpe = isSpe;
     }
     
-    if (!isMaj){
+    if (!isMaj) {
       error.push("Password must contain at least a majuscule");
     }
-    if (!isMin){
+    if (!isMin) {
       error.push("Password must contain at least a minuscule");
     }
-    if (!isNum){
+    if (!isNum) {
       error.push("Password must contain at least a number");
     }
-    if (!isSpe){
+    if (!isSpe) {
       error.push("Password must contain at least a special character");
     }
-    if (error.length>0){
+    if (error.length > 0) {
       let err = new Error(error);
       throw err;
     }
@@ -97,11 +97,6 @@ const login = async (req, res, next) => {
 
     res.json({ message: 'Login successful', token, id: user._id});
   } catch (err) {
-    if (err.message === 'Invalid credentials') return res.status(401).json({
-      error: err,
-      message: 'Invalid credentials'
-    });
-
     return res.status(500).send({
       error: err.message,
       message: 'Error during login'
@@ -113,18 +108,12 @@ const logout = async (req, res, next) => {
   try {
     res.json({ message: 'Logout successful' }); 
   } catch (err) {
-    if (err.message === 'Invalid credentials') return res.status(401).json({
-      error: err,
-      message: 'Invalid credentials'
-    });
-
     return res.status(500).send({
       error: err.message,
       message: 'Error during logout'
     });
   }
 };
-
 
 export default {
   register,

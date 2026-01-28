@@ -1,0 +1,119 @@
+-- 1. TABLES DE BASE
+CREATE TABLE public.users (
+    id SERIAL PRIMARY KEY,
+    mail character varying(255) NOT NULL UNIQUE,
+    password character varying(255) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer
+);
+
+CREATE TABLE public.tournament (
+    id SERIAL PRIMARY KEY,
+    name character varying(255) NOT NULL,
+    description text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+CREATE TABLE public.step_settings (
+    id SERIAL PRIMARY KEY,
+    victory_condition character varying(255),
+    number_players integer,
+    number_winners integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+CREATE TABLE public.step (
+    id SERIAL PRIMARY KEY,
+    name character varying(255),
+    description text,
+    tournament_id integer REFERENCES public.tournament(id),
+    step_position integer,
+    step_component_type character varying(50) CHECK (step_component_type IN ('tree', 'br', 'league')),
+    step_setting_id integer REFERENCES public.step_settings(id),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+-- 2. COMPOSANTS SPÉCIFIQUES
+CREATE TABLE public.tree (
+    id SERIAL PRIMARY KEY,
+    name character varying(255),
+    description text,
+    tournament_id integer REFERENCES public.tournament(id),
+    step_id integer REFERENCES public.step(id),
+    depth_level integer,
+    parent_tree_id integer REFERENCES public.tree(id),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+CREATE TABLE public.league (
+    id SERIAL PRIMARY KEY,
+    name character varying(255),
+    description text,
+    tournament_id integer REFERENCES public.tournament(id),
+    step_id integer REFERENCES public.step(id),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+CREATE TABLE public.br (
+    id SERIAL PRIMARY KEY,
+    name character varying(255),
+    description text,
+    tournament_id integer REFERENCES public.tournament(id),
+    step_id integer REFERENCES public.step(id),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+-- 3. ACTEURS ET RENCONTRES
+CREATE TABLE public.players (
+    id SERIAL PRIMARY KEY,
+    name character varying(255) NOT NULL,
+    nationality character varying(100),
+    team character varying(100),
+    description text,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+CREATE TABLE public.versus (
+    id SERIAL PRIMARY KEY,
+    player1_id integer REFERENCES public.players(id),
+    player2_id integer REFERENCES public.players(id),
+    player1_value integer,
+    player2_value integer,
+    tree_id integer REFERENCES public.tree(id),
+    step_id integer REFERENCES public.step(id),
+    match_date timestamp without time zone,
+    status character varying(50) DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'in_progress', 'completed', 'cancelled')),
+    winner_id integer REFERENCES public.players(id),
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id)
+);
+
+-- 4. TABLES DE PARTICIPATION (Liaisons)
+CREATE TABLE public.league_participation (
+    player_id integer REFERENCES public.players(id),
+    league_id integer REFERENCES public.league(id),
+    score integer DEFAULT 0,
+    matches_played integer DEFAULT 0,
+    matches_won integer DEFAULT 0,
+    position integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id),
+    PRIMARY KEY (player_id, league_id)
+);
+
+CREATE TABLE public.br_participation (
+    player_id integer REFERENCES public.players(id),
+    br_id integer REFERENCES public.br(id),
+    value integer,
+    position integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    created_by integer REFERENCES public.users(id),
+    PRIMARY KEY (player_id, br_id)
+);

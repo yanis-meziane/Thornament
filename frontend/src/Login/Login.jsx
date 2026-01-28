@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import './Login.css';
 
-
 export default function Login(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -10,36 +9,44 @@ export default function Login(){
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
     
+    const LOGIN_ENDPOINT = {
+        url: 'http://localhost:3001/api/auth/login',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
 
-        const formData = {
+
+        const requestBody = {
             email: email,
             password: password
         };
 
         try {
-            const response = await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
+            const response = await fetch(LOGIN_ENDPOINT.url, {
+                method: LOGIN_ENDPOINT.method,
+                headers: LOGIN_ENDPOINT.headers,
+                body: JSON.stringify(requestBody)
             });
 
             const data = await response.json();
 
-            if (data.success) {
+            if (response.ok) {
                 // Stocker les informations utilisateur
-                localStorage.setItem("userId", data.userId);
-                localStorage.setItem("firstname", data.firstname);
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('userId', data.id);
+                localStorage.setItem('userRole', data.role);
                 
                 setSuccess('Connexion réussie !');
                 
                 setTimeout(() => {
-                    navigate('/main');
+                    navigate('/home');
                 }, 500);
 
             } else {
@@ -51,8 +58,6 @@ export default function Login(){
             setError('Erreur de connexion au serveur');
         }
     };
-
-    
     
     return(
         <div className="connexion-container">
@@ -83,7 +88,7 @@ export default function Login(){
                         name="password" 
                         id="password" 
                         placeholder="Password..." 
-                        minLength={8} 
+                        minLength={12} 
                         maxLength={20} 
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)}
@@ -97,4 +102,4 @@ export default function Login(){
             </form>
         </div>
     )
-}  
+}
