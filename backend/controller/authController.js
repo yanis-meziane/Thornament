@@ -1,6 +1,6 @@
-import { crypt, compare } from "../services/hash.js";
+import crypt from "../services/hash.js";
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
 import {registerRepository, loginRepository} from '../repositories/authRepositories.js'
 
 process.loadEnvFile("./.env");
