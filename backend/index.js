@@ -15,7 +15,7 @@ app.use(express.json());
 
 // allow only your frontend origin and allow credentials if needed
 app.use(cors({
-  origin: process.env.URL_FRONTED, // or an array of origins
+  origin: process.env.URL_FRONTEND, // or an array of origins
   credentials: true,
 }));
 

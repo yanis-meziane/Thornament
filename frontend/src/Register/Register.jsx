@@ -46,7 +46,7 @@ export default function Register(){
         }
 
         const requestBody = {
-            email: mail,
+            mail: mail,
             password: password
         };
 
