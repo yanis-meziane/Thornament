@@ -116,6 +116,8 @@ const getStepById = async (req, res, next) => {
 
     const step = await getStepByIdRepository(step_id, user.id);
 
+    //tdo : retrieve les steps component correspondant au à la step id avec le bon type si déjà existant
+
     return res.status(201).json({
       message: "Steps retrieved successfuly",
       steps : step

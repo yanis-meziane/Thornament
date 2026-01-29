@@ -4,6 +4,7 @@ import userRoutes from './userRoutes.js';
 import tournamentRoutes from './tournamentRoutes.js';
 import stepRoutes from './stepRoutes.js';
 import playerRoutes from './playerRoutes.js';
+import stepComponentRoutes from './stepComponentRoutes.js';
 
 const router = express.Router();
 
@@ -13,5 +14,6 @@ router.use('/user', userRoutes);
 router.use('/tournament', tournamentRoutes);
 router.use('/step', stepRoutes);
 router.use('/player', playerRoutes);
+router.use('/step-component', stepComponentRoutes);
 
 export default router;

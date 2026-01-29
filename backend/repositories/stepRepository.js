@@ -152,4 +152,3 @@ export async function updateSettingsRepository(
         throw new Error(error); 
     });
 };
-
