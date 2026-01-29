@@ -15,6 +15,7 @@ function App() {
           <Route path='/login' element={<Login />}/>
           <Route path='/home' element={<Main />}/>
           <Route path='/tournament' element={<Tournament />}/>
+          <Route path='/tournament/:id' element={<Phase />}/>
           <Route path='/phase' element={<Phase />}/>
         </Routes>
       </BrowserRouter>

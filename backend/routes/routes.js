@@ -8,6 +8,6 @@ const router = express.Router();
 // Mount routes
 router.use('/auth', authRoutes);
 router.use('/user', userRoutes);
-router.use('/tournaments', tournamentRoutes);
+router.use('/tournament', tournamentRoutes);
 
 export default router;

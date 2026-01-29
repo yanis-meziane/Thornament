@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar';
 import Sidebar from '../Sidebar/Sidebar';
 import CreateTournamentModal from '../Phase/CreateTournamentModal';
@@ -25,10 +25,10 @@ const TOURNOIS_ENDPOINTS = {
 };
 
 export default function Tournament() {
+    const navigate = useNavigate();
     const [tournois, setTournament] = useState([]);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    //const navigate = useNavigate();
 
     const getAuthHeaders = () => {
         const token = localStorage.getItem('token');
@@ -84,8 +84,8 @@ export default function Tournament() {
             const data = await response.json();
 
             if (response.ok) {
-                alert('Tournoi créé avec succès !');
-                fetchTournament();
+                // Rediriger vers le tournoi créé
+                navigate(`/tournament/${data.tournament.id}`);
             } else {
                 alert(data.message || 'Erreur lors de la création');
             }
@@ -146,7 +146,10 @@ export default function Tournament() {
                                         <p>{tournoi.description}</p>
                                         <p>Status: {tournoi.status}</p>
                                         <div className="tournoi-actions">
-                                            <button onClick={() => handleDeleteTournament(tournoi.id)}>
+                                            <button className="btn-open" onClick={() => navigate(`/tournament/${tournoi.id}`)}>
+                                                Ouvrir
+                                            </button>
+                                            <button className="btn-delete" onClick={() => handleDeleteTournament(tournoi.id)}>
                                                 Supprimer
                                             </button>
                                         </div>

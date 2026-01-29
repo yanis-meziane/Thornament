@@ -6,11 +6,11 @@ process.loadEnvFile(".env");
 
 const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { mail, password } = req.body;
 
     const error = [];
 
-    if (!email || !password) {
+    if (!mail || !password) {
       return res.status(400).json({ message: "Mail et Mot de passe nécessaire" });
     }
 
@@ -44,7 +44,7 @@ const register = async (req, res) => {
     const hashedPassword = await crypt(password);
 
     // Table users: mail, password
-    const newUser = await User.create({ email, hashedPassword });
+    const newUser = await User.create({ email: mail, hashedPassword });
 
     // on renvoie un user "safe" (sans password)
     return res.status(201).json({ id: newUser.id, mail: newUser.mail });
@@ -59,32 +59,33 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { mail, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!mail || !password) {
+      return res.status(400).json({ message: "Mail et mot de passe requis" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: mail });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Identifiants invalides" });
     }
 
     const isValidPassword = await compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Identifiants invalides" });
     }
 
-    const payload = { id: user.id, email: user.mail };
+    const payload = { id: user.id, mail: user.mail };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
 
     return res.json({
       message: "Login successful",
       token,
       id: user.id,
+      mail: user.mail
     });
   } catch (err) {
     return res.status(500).json({

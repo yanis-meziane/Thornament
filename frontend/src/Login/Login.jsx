@@ -3,7 +3,7 @@ import { useState } from "react"
 import './Login.css';
 
 export default function Login(){
-    const [email, setEmail] = useState('');
+    const [mail, setMail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -24,7 +24,7 @@ export default function Login(){
 
 
         const requestBody = {
-            email: email,
+            mail: mail,
             password: password
         };
 
@@ -41,7 +41,7 @@ export default function Login(){
                 // Stocker les informations utilisateur
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userId', data.id);
-                localStorage.setItem('userRole', data.role);
+                localStorage.setItem('userMail', data.mail);
                 
                 setSuccess('Connexion réussie !');
                 
@@ -67,16 +67,16 @@ export default function Login(){
                 {success && <p className="success-message">{success}</p>}
                 
                 <div id="divEmail">
-                    <label htmlFor="email">Email : </label>
+                    <label htmlFor="mail">Email : </label>
                     <input 
                         type="email" 
-                        name="email" 
-                        id="email" 
+                        name="mail" 
+                        id="mail" 
                         placeholder="Votre email..." 
                         minLength={5} 
                         maxLength={50}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={mail}
+                        onChange={(e) => setMail(e.target.value)}
                         required
                     />
                 </div>
