@@ -1,6 +1,14 @@
+import { useState } from 'react';
+import CreateStepModal from './CreateStepModal';
 import './PhaseContent.css';
 
-export default function PhaseContent({ phase, onAddInstance }) {
+export default function PhaseContent({ phase, stepPosition, tournamentId }) {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleAddStep = () => {
+        setIsModalOpen(true);
+    };
+
     return (
         <div className="phase-content">
             <div className="phase-container">
@@ -9,7 +17,7 @@ export default function PhaseContent({ phase, onAddInstance }) {
                 {phase.instances.length === 0 && (
                     <div className="empty-phase">
                         <p>Aucune étape pour le moment</p>
-                        <button className="btn-add-instance" onClick={onAddInstance}>
+                        <button className="btn-add-instance" onClick={handleAddStep}>
                             + Ajouter une étape
                         </button>
                     </div>
@@ -23,6 +31,18 @@ export default function PhaseContent({ phase, onAddInstance }) {
                     ))}
                 </div>
             </div>
+
+            <CreateStepModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onCreate={(stepData) => {
+                    // Le formulaire affiche les données, la création est gérée ailleurs
+                    console.log('Données du formulaire:', stepData);
+                    setIsModalOpen(false);
+                }}
+                stepPosition={stepPosition}
+                tournamentId={tournamentId}
+            />
         </div>
     );
 }

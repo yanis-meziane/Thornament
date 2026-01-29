@@ -107,9 +107,8 @@ export default function Tournament() {
                 {activePhase && (
                     <PhaseContent 
                         phase={activePhase}
-                        onAddInstance={() => {
-                            // À implémenter : ajout d'une instance
-                        }}
+                        stepPosition={activePhaseId}
+                        tournamentId={id}
                     />
                 )}
                 
