@@ -4,7 +4,6 @@ import authMiddleware from '../middleware/authMiddleware.js';
 
 let router = express.Router();
 
-// tdo
 router.post('/', authMiddleware.isAuth, tournamentController.createTournament);
 router.get('/', authMiddleware.isAuth, tournamentController.getAllTournaments);
 router.get('/:id', authMiddleware.isAuth, tournamentController.getTournamentById);

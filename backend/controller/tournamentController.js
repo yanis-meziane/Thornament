@@ -1,6 +1,5 @@
 import {
   createTournamentRepository,
-  createFirstPhaseRepository,
   getAllTournamentsRepository,
   getTournamentByIdRepository,
   deleteTournamentRepository
