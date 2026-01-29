@@ -9,6 +9,9 @@ router.get('/', authMiddleware.isAuth, stepController.getAllSteps);
 router.get('/:id', authMiddleware.isAuth, stepController.getStepById);
 router.get('/tournament/:id', authMiddleware.isAuth, stepController.getAllStepsByTournamentId);
 router.put('/settings/:id', authMiddleware.isAuth, stepController.modifySettings);
+
+// TDO : get all step_components (=relation) of a step_id
+
 // router.get('/:id', authMiddleware.isAuth, tournamentController.getTournamentById);
 // router.delete('/:id', authMiddleware.isAuth, tournamentController.deleteTournament);
 

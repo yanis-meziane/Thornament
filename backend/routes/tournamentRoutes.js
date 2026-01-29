@@ -9,4 +9,6 @@ router.get('/', authMiddleware.isAuth, tournamentController.getAllTournaments);
 router.get('/:id', authMiddleware.isAuth, tournamentController.getTournamentById);
 router.delete('/:id', authMiddleware.isAuth, tournamentController.deleteTournament);
 
+// TDO : get all the steps of a tournament
+
 export default router;
