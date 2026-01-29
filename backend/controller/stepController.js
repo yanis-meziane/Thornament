@@ -7,6 +7,8 @@ import {
   updateSettingsRepository
 } from '../repositories/stepRepository.js';
 import { getTournamentByIdRepository } from "../repositories/tournamentRepository.js";
+import { getAllBRByStepIdRepository, getAllVersusByStepIdRepository, getAllVersusTreeByStepIdRepository } from "../repositories/stepComponentRepository.js";
+import { getPlayerByIdRepository } from "../repositories/playerRepository.js";
 
 
 process.loadEnvFile("./.env");
@@ -96,7 +98,7 @@ const getAllStepsByTournamentId = async (req, res, next) => {
 
     const user = req.user;
 
-    const settings = await getAllStepsRepository(user.id, tournament_id);
+    const steps = await getAllStepsRepository(user.id, tournament_id);
 
     return res.status(201).json({
       message: "Steps retrieved successfuly",
@@ -151,10 +153,77 @@ const modifySettings = async (req, res, next) => {
   }
 }
 
+const getAllStepComponentById = async (req, res, next) => {
+  try {
+    const step_id = req.params.id;
+
+    const user = req.user;
+
+    let step = await getStepByIdRepository(step_id, user.id);
+
+    let stepComponents;
+    let players = [];
+
+    switch (step.step_component_type) {
+      case 'br':
+        stepComponents = await getAllBRByStepIdRepository(step_id, user.id);
+        break;
+      case 'league':
+        stepComponents = await getAllVersusByStepIdRepository(step_id, user.id);
+        break;
+      case 'tree':
+        stepComponents = await getAllVersusTreeByStepIdRepository(step_id, user.id);
+        break;
+      default:
+        throw new Error("step_component_type isn't defined");
+    }
+
+    // warning :  tres tres mal codé... plutot faire une requete
+    // pas le temps pour le moment
+    // stepComponents.forEach(component => {
+    //   if (component.player_id) {
+    //     let player = await getPlayerByIdRepository(component.player_id, user.id)
+    //     players.push(player);
+    //   }
+    //   else {
+    //     let player1 = await getPlayerByIdRepository(component.player1_id, user.id)
+    //     let player2 = await getPlayerByIdRepository(component.player2_id, user.id)
+    //     players.push(player1);
+    //     players.push(player2);
+    //   }
+    // });
+    
+    const playerPromises = stepComponents.flatMap(component => {
+    if (component.player_id) {
+      return getPlayerByIdRepository(component.player_id, user.id);
+    } else {
+      return [
+        getPlayerByIdRepository(component.player1_id, user.id),
+        getPlayerByIdRepository(component.player2_id, user.id)
+      ];
+    }
+    });
+
+    players = await Promise.all(playerPromises);
+
+    return res.status(201).json({
+      message: "Steps retrieved successfuly",
+      steps : stepComponents,
+      players : players
+    });
+  } catch (e) {
+    console.error("Error during steps retrieval:", e);
+    return res.status(500).json({ message: "Erreur lors de la récupération des l'etapes", error: e.message });
+  }
+}
+
+
+
 export default {
   createStep,
   getAllSteps,
   getStepById,
   getAllStepsByTournamentId,
   modifySettings,
+  getAllStepComponentById,
 }

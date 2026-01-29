@@ -64,7 +64,7 @@ export async function updatePlayerRepository(
     });
 };
 
-export async function getAllPlayersRepository(user_id, step_id = null) {
+export async function getAllPlayersRepository(user_id) {
 
   let query = `SELECT id, name, nationality, team, description
     FROM players
@@ -78,6 +78,28 @@ export async function getAllPlayersRepository(user_id, step_id = null) {
   //   AND tournament_id = $2`
   //   parameters.push(tournament_id);
   // }
+
+  return db.manyOrNone(
+    query,
+    parameters
+    )
+    .then(data => {
+      return data;
+    })
+    .catch(error => {
+      console.error("Error during player retrieval : ", error)
+      throw new Error(error); 
+    });
+};
+
+export async function getPlayerByIdRepository(player_id, user_id) {
+
+  let query = `SELECT id, name, nationality, team, description
+    FROM players
+    WHERE created_by = $1
+    AND id = $2`;
+
+  let parameters = [user_id, player_id];
 
   return db.manyOrNone(
     query,

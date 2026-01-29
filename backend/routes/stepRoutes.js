@@ -10,7 +10,8 @@ router.get('/:id', authMiddleware.isAuth, stepController.getStepById);
 router.get('/tournament/:id', authMiddleware.isAuth, stepController.getAllStepsByTournamentId);
 router.put('/settings/:id', authMiddleware.isAuth, stepController.modifySettings);
 
-// TDO : get all step_components (=relation) of a step_id
+// TDO : get all step_components (=relation) of a step_id (already exists in step component, it gives players here as well)
+router.get('/:id/components', authMiddleware.isAuth, stepController.getAllStepComponentById);
 
 // router.get('/:id', authMiddleware.isAuth, tournamentController.getTournamentById);
 // router.delete('/:id', authMiddleware.isAuth, tournamentController.deleteTournament);
