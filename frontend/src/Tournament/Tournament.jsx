@@ -131,13 +131,20 @@ export default function Tournament() {
                 <div className="tournois-content">
                    
                     {error && <p className="error-message">{error}</p>}
+                    
+                    {tournois.length === 0 ? (
+                        <>
                             <p className="no-tournois">Vous n'avez aucun tournois pour l'instant</p>
                             <button className="btn-create" onClick={() => setIsModalOpen(true)}>
                                 Créer un nouveau tournoi
                             </button>
-                      
+                        </>
+                    ) : (
+                        <>
                             <h2>Vos Tournois ({tournois.length})</h2>
-                            
+                            <button className="btn-create" onClick={() => setIsModalOpen(true)}>
+                                Créer un nouveau tournoi
+                            </button>
                             
                             <div className="tournois-list">
                                 {tournois.map((tournoi) => (
@@ -146,16 +153,18 @@ export default function Tournament() {
                                         <p>{tournoi.description}</p>
                                         <p>Status: {tournoi.status}</p>
                                         <div className="tournoi-actions">
-                                            <button className="btn-open" onClick={() => navigate(`/tournament/${tournoi.id}`)}>
+                                            <button className="btnAction" onClick={() => navigate(`/tournament/${tournoi.id}`)}>
                                                 Ouvrir
                                             </button>
-                                            <button className="btn-delete" onClick={() => handleDeleteTournament(tournoi.id)}>
+                                            <button className="btnAction" onClick={() => handleDeleteTournament(tournoi.id)}>
                                                 Supprimer
                                             </button>
                                         </div>
                                     </div>
                                 ))}
                             </div>
+                        </>
+                    )}
                 </div>
             </div>
             

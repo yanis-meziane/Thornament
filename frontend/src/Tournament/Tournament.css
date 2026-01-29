@@ -8,6 +8,28 @@
     transition: margin-left 0.3s ease;
 }
 
+.tournois-list{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+    padding: 2rem;
+}
+
+.tournoi-card{
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 3vh;
+    padding: 1.5rem;
+    background-color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tournoi-card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
 .tournois-container.sidebar-open {
     margin-left: 250px;
 }
@@ -42,4 +64,17 @@
 
 .btn-create:hover {
     background-color: #7B7ED0;
+}
+
+.btnAction{
+    width: 8vh;
+    background: none;
+    border: none;
+    border-radius: 2vh;
+    margin: 2vh;
+}
+
+.btnAction:hover{
+    background-color: rgb(98, 99, 99);
+    color: white;
 }
