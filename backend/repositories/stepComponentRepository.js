@@ -76,7 +76,7 @@ export async function updateBRRepository(
 ) {  
   let query = ``;
   let set = ``;
-  let params = [settings_id, user_id];
+  let params = [br_id, user_id];
 
   for (const [i, [key, value]] of Object.entries(data).entries()) {
     set += `
