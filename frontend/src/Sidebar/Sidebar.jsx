@@ -23,12 +23,17 @@ export default function Sidebar() {
             {isOpen && (
                 <nav className="sidebar-nav">
                     <ul>
+
+                         <li onClick={() => navigate('/home')}>
+                            Accueil
+                        </li>
+                        
                         <li onClick={() => handleNavigate('/tournament')}>
                             Vos Tournois
                         </li>
 
                         <li onClick={()=> handleNavigate('/')}>
-                            Se connecter / S'inscrire
+                            Se déconnecter
                         </li>
                     </ul>
                 </nav>
