@@ -141,22 +141,24 @@ export default function Tournament() {
                         </>
                     ) : (
                         <>
-                            <h2>Vos Tournois ({tournois.length})</h2>
-                            <button className="btn-create" onClick={() => setIsModalOpen(true)}>
-                                Créer un nouveau tournoi
-                            </button>
+                            <div className="tournois-header">
+                                <h2>Vos Tournois ({tournois.length})</h2>
+                                <button className="btn-create" onClick={() => setIsModalOpen(true)}>
+                                    Créer un nouveau tournoi
+                                </button>
+                            </div>
                             
                             <div className="tournois-list">
                                 {tournois.map((tournoi) => (
                                     <div key={tournoi.id} className="tournoi-card">
                                         <h3>{tournoi.name}</h3>
-                                        <p>{tournoi.description}</p>
-                                        <p>Status: {tournoi.status}</p>
+                                        <p className="tournoi-description">{tournoi.description}</p>
+                                        <p className="tournoi-status">Status: {tournoi.status}</p>
                                         <div className="tournoi-actions">
-                                            <button className="btnAction" onClick={() => navigate(`/tournament/${tournoi.id}`)}>
+                                            <button className="btn-action btn-open" onClick={() => navigate(`/tournament/${tournoi.id}`)}>
                                                 Ouvrir
                                             </button>
-                                            <button className="btnAction" onClick={() => handleDeleteTournament(tournoi.id)}>
+                                            <button className="btn-action btn-delete" onClick={() => handleDeleteTournament(tournoi.id)}>
                                                 Supprimer
                                             </button>
                                         </div>
