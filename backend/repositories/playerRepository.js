@@ -4,7 +4,6 @@ export async function createPlayerRepository(
   data,
   user_id
 ) {
-  console.log(data)
   return db.one(
     `
     INSERT INTO players (name, nationality, team, description, created_by) 
