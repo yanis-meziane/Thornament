@@ -20,8 +20,7 @@ const createTournament = async (req, res, next) => {
     // Créer le tournoi
     const tournament = await createTournamentRepository(name, userId);
 
-    // Créer la première phase automatiquement
-    const firstPhase = await createFirstPhaseRepository(tournament.id, userId);
+    // const firstPhase = await createFirstPhaseRepository(tournament.id, userId);
 
     return res.status(201).json({
       message: "Tournoi créé avec succès",
@@ -29,11 +28,6 @@ const createTournament = async (req, res, next) => {
         id: tournament.id,
         name: tournament.name,
         created_at: tournament.created_at,
-        firstPhase: {
-          id: firstPhase.id,
-          name: firstPhase.name,
-          step_position: firstPhase.step_position
-        }
       }
     });
   } catch (e) {
