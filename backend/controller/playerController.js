@@ -1,4 +1,4 @@
-import { createPlayerRepository, updatePlayerRepository } from '../repositories/playerRepository.js';
+import { createPlayerRepository, getAllPlayersRepository, updatePlayerRepository } from '../repositories/playerRepository.js';
 
 process.loadEnvFile("./.env");
 
@@ -57,7 +57,24 @@ const modifyPlayer = async (req, res, next) => {
   }
 }
 
+const getAllPlayers = async (req, res, next) => {
+  try {
+    const user = req.user;
+    
+    const player = await getAllPlayersRepository(user.id);
+
+    return res.status(201).json({
+      message: "Players retrieved successfuly",
+      player: player
+    });
+  } catch (e) {
+    console.error("Error during player retrieval:", e);
+    return res.status(500).json({ message: "Erreur lors de la récupération du joueur", error: e.message });
+  }
+}
+
 export default {
   createPlayer,
   modifyPlayer,
+  getAllPlayers,
 }
