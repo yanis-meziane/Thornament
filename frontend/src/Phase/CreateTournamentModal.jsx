@@ -3,12 +3,14 @@ import './CreateTournamentModal.css';
 
 export default function CreateTournamentModal({ isOpen, onClose, onCreate }) {
     const [tournamentName, setTournamentName] = useState('');
+    const [tournamentDescription, setTournamentDescription] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (tournamentName.trim()) {
-            onCreate(tournamentName);
+            onCreate(tournamentName, tournamentDescription);
             setTournamentName('');
+            setTournamentDescription('');
         }
     };
 
@@ -28,6 +30,16 @@ export default function CreateTournamentModal({ isOpen, onClose, onCreate }) {
                             value={tournamentName}
                             onChange={(e) => setTournamentName(e.target.value)}
                             autoFocus
+                        />
+                    </div>
+                    
+                    <div className="form-group">
+                        <textarea
+                            className="form-input"
+                            placeholder="Description du tournoi (optionnel)"
+                            value={tournamentDescription}
+                            onChange={(e) => setTournamentDescription(e.target.value)}
+                            rows="4"
                         />
                     </div>
                     

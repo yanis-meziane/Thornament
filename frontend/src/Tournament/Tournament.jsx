@@ -65,13 +65,13 @@ export default function Tournament() {
     }, [fetchTournament]);
 
     //Création de tournois
-    const handleCreateTournament = async (tournamentName) => {
+    const handleCreateTournament = async (tournamentName, tournamentDescription = "") => {
         setIsModalOpen(false);
 
         
         const requestBody = {
             name: tournamentName,
-            description: ""
+            description: tournamentDescription
         };
 
         try {

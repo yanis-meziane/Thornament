@@ -10,7 +10,7 @@ process.loadEnvFile("./.env");
 
 const createTournament = async (req, res, next) => {
   try {
-    const { name } = req.body;
+    const { name, description = "" } = req.body;
     const userId = req.user.id; // Récupéré du JWT par authMiddleware
 
     if (!name || name.trim() === '') {
@@ -18,7 +18,7 @@ const createTournament = async (req, res, next) => {
     }
 
     // Créer le tournoi
-    const tournament = await createTournamentRepository(name, userId);
+    const tournament = await createTournamentRepository(name, description, userId);
 
     // Créer la première phase automatiquement
     const firstPhase = await createFirstPhaseRepository(tournament.id, userId);
@@ -28,6 +28,7 @@ const createTournament = async (req, res, next) => {
       tournament: {
         id: tournament.id,
         name: tournament.name,
+        description: tournament.description,
         created_at: tournament.created_at,
         firstPhase: {
           id: firstPhase.id,

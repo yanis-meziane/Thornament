@@ -1,13 +1,13 @@
 import db from '../db/db.js';
 
 // Créer un nouveau tournoi
-export async function createTournamentRepository(name, userId) {
+export async function createTournamentRepository(name, description, userId) {
   try {
     const tournament = await db.one(
-      `INSERT INTO tournament (name, created_by)
-       VALUES ($1, $2)
-       RETURNING id, name, created_at, created_by`,
-      [name, userId]
+      `INSERT INTO tournament (name, description, created_by)
+       VALUES ($1, $2, $3)
+       RETURNING id, name, description, created_at, created_by`,
+      [name, description, userId]
     );
     return tournament;
   } catch (error) {
@@ -36,7 +36,7 @@ export async function createFirstPhaseRepository(tournamentId, userId) {
 export async function getAllTournamentsRepository(userId) {
   try {
     const tournaments = await db.any(
-      `SELECT id, name, created_at, created_by 
+      `SELECT id, name, description, created_at, created_by 
        FROM tournament 
        WHERE created_by = $1 
        ORDER BY created_at DESC`,
@@ -53,7 +53,7 @@ export async function getAllTournamentsRepository(userId) {
 export async function getTournamentByIdRepository(tournamentId, userId) {
   try {
     const tournament = await db.oneOrNone(
-      `SELECT id, name, created_at, created_by 
+      `SELECT id, name, description, created_at, created_by 
        FROM tournament 
        WHERE id = $1 AND created_by = $2`,
       [tournamentId, userId]
