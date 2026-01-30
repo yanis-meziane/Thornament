@@ -156,6 +156,22 @@ export default function Tournament() {
 
     const activePhase = phases.find(phase => phase.id === activePhaseId);
 
+    const goToNextPhase = () => {
+        const currentIndex = phases.findIndex(p => p.id === activePhaseId);
+        if (currentIndex < phases.length - 1) {
+            setActivePhaseId(phases[currentIndex + 1].id);
+        }
+    };
+
+    const goToPrevPhase = () => {
+        const currentIndex = phases.findIndex(p => p.id === activePhaseId);
+        if (currentIndex > 0) {
+            setActivePhaseId(phases[currentIndex - 1].id);
+        }
+    };
+
+    const currentIndex = phases.findIndex(p => p.id === activePhaseId);
+
     return (
         <div className="tournament-page">
             <Navbar title={tournamentName} isConnected={true} />
@@ -167,7 +183,19 @@ export default function Tournament() {
                     onPhaseSelect={setActivePhaseId}
                     onPhaseDelete={deletePhase}
                 />
+
+                {/* Nouveau bouton central pour ajouter une phase */}
+                <div className="add-phase-container-center">
+                    <button className="btn-add-phase-inline" onClick={addPhase}>
+                        + Nouvelle Phase
+                    </button>
+                </div>
                 
+                {/* Flèche Gauche */}
+                {currentIndex > 0 && (
+                    <button className="nav-arrow left" onClick={goToPrevPhase}>‹</button>
+                )}
+
                 {activePhase && (
                     <PhaseContent 
                         phase={activePhase}
@@ -176,9 +204,14 @@ export default function Tournament() {
                     />
                 )}
                 
-                <button className="btn-add-phase-side" onClick={addPhase} title="Ajouter une phase">
-                    +
-                </button>
+                {/* Flèche Droite ou Bouton Ajouter (Side) */}
+                {currentIndex < phases.length - 1 ? (
+                    <button className="nav-arrow right" onClick={goToNextPhase}>›</button>
+                ) : (
+                    <button className="btn-add-phase-side" onClick={addPhase} title="Ajouter une phase">
+                        +
+                    </button>
+                )}
             </div>
         </div>
     );

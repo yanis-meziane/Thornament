@@ -6,7 +6,7 @@
     background-color: #F8F8FF;
     margin-left: 60px;
     transition: margin-left 0.3s ease;
-    padding: 2rem 0;
+    padding: 2rem 0 0 12rem;
 }
 
 .tournois-content {
