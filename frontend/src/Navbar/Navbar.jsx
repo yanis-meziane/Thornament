@@ -1,29 +1,22 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import './Navbar.css';
 
-export default function Navbar({ title, isConnected = false }) {
+export default function Navbar({ title = false }) {
     const navigate = useNavigate();
-    const location = useLocation();
-
-    // Ne pas afficher le bouton de retour sur la page d'accueil
-    const showBackButton = location.pathname !== '/' && location.pathname !== '/tournament';
-
     return (
         <nav className="navbar">
-            <div className="navbar-left">
-                {showBackButton && (
-                    <button className="btn-back" onClick={() => navigate(-1)} title="Retour">
+            <div>
+                    <button onClick={() => navigate("/home")} id='buttonAccueil'>
                         Accueil
                     </button>
-                )}
             </div>
             
-            <div className="navbar-center">
+            <div>
                 <h1>{title}</h1>
             </div>
-            
-            <div className="navbar-right">
-                {/* Espace réservé pour la symétrie */}
+
+            <div>
+                <img src='/thornament.png' alt='Logo' id='logoApp'  onClick={() => navigate("/home")}></img>
             </div>
         </nav>
     );
