@@ -4,13 +4,58 @@
  
 .navbar {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
     background-color: #2C2C2C;
     height: 60px;
     font-family: Arial, sans-serif;
     color: #FFFFFF;
+}
+
+.navbar-left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.navbar-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar-center h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #FFFFFF;
+}
+
+.navbar-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-back {
+    padding: 0.6rem 1.2rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-back:hover {
+    background-color: #45a049;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-back:active {
+    transform: scale(0.98);
 }
 
 

@@ -3,9 +3,9 @@ import './CreateStepModal.css';
 
 // Options statiques pour le formulaire
 const STEP_COMPONENT_TYPES = [
-    { value: 'versus', label: 'Versus (1v1)' },
-    { value: 'battleroyale', label: 'Battle Royale' },
-    { value: 'arbre_eliminatoire', label: 'Arbre éliminatoire' }
+    { value: 'tree', label: 'Arbre éliminatoire' },
+    { value: 'br', label: 'Battle Royale' },
+    { value: 'league', label: 'Ligue (vs)' }
 ];
 
 const VICTORY_CONDITIONS = [
@@ -16,7 +16,7 @@ const VICTORY_CONDITIONS = [
 export default function CreateStepModal({ isOpen, onClose, onCreate, stepPosition, tournamentId }) {
     const [stepName, setStepName] = useState('');
     const [stepDescription, setStepDescription] = useState('');
-    const [stepComponentType, setStepComponentType] = useState('versus');
+    const [stepComponentType, setStepComponentType] = useState('tree');
     const [victoryCondition, setVictoryCondition] = useState('max');
     const [numberPlayers, setNumberPlayers] = useState('');
     const [numberWinners, setNumberWinners] = useState('');
@@ -37,7 +37,7 @@ export default function CreateStepModal({ isOpen, onClose, onCreate, stepPositio
             // Reset form
             setStepName('');
             setStepDescription('');
-            setStepComponentType('versus');
+            setStepComponentType('tree');
             setVictoryCondition('max');
             setNumberPlayers('');
             setNumberWinners('');

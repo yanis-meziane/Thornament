@@ -1,12 +1,80 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CreateStepModal from './CreateStepModal';
+import CompetitionView from './CompetitionView';
 import './PhaseContent.css';
 
-export default function PhaseContent({ phase, stepPosition, tournamentId }) {
+export default function PhaseContent({ phase, stepPosition, tournamentId, onStepsLoaded }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [steps, setSteps] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    // Charger les steps du tournoi
+    useEffect(() => {
+        fetchSteps();
+    }, [tournamentId, stepPosition]);
+
+    const fetchSteps = async () => {
+        if (!tournamentId) return;
+
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:3001/api/step/tournament/${tournamentId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Filtrer les steps de cette phase (step_position)
+                const phaseSteps = data.steps.filter(step => step.step_position === stepPosition);
+                setSteps(phaseSteps);
+                
+                if (onStepsLoaded) {
+                    onStepsLoaded(phaseSteps);
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des steps:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleAddStep = () => {
         setIsModalOpen(true);
+    };
+
+    const handleStepCreated = async (stepData) => {
+        setIsModalOpen(false);
+        
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3001/api/step', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(stepData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Recharger les steps
+                fetchSteps();
+            } else {
+                alert(data.message || 'Erreur lors de la création de l\'étape');
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            alert('Erreur de connexion au serveur');
+        }
     };
 
     return (
@@ -14,32 +82,46 @@ export default function PhaseContent({ phase, stepPosition, tournamentId }) {
             <div className="phase-container">
                 <h2>{phase.name}</h2>
                 
-                {phase.instances.length === 0 && (
+                {loading ? (
+                    <p className="loading">Chargement des étapes...</p>
+                ) : steps.length === 0 ? (
                     <div className="empty-phase">
                         <p>Aucune étape pour le moment</p>
                         <button className="btn-add-instance" onClick={handleAddStep}>
                             + Ajouter une étape
                         </button>
                     </div>
-                )}
-                
-                <div className="instances-list">
-                    {phase.instances.map((instance, index) => (
-                        <div key={index} className="instance-card">
-                            {/* Contenu des instances à implémenter */}
+                ) : (
+                    <div className="steps-container">
+                        <div className="steps-header">
+                            <p className="steps-count">Étapes ({steps.length})</p>
+                            <button className="btn-add-instance" onClick={handleAddStep}>
+                                + Ajouter une étape
+                            </button>
                         </div>
-                    ))}
-                </div>
+
+                        <div className="steps-list">
+                            {steps.map((step) => (
+                                <CompetitionView
+                                    key={step.id}
+                                    stepId={step.id}
+                                    stepType={step.step_component_type}
+                                    stepName={step.name}
+                                    numberOfPlayers={step.number_players}
+                                    numberOfGroups={Math.ceil(step.number_players / 4)} // À adapter selon les besoins
+                                    participants={[]}
+                                    matches={[]}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <CreateStepModal 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onCreate={(stepData) => {
-                    // Le formulaire affiche les données, la création est gérée ailleurs
-                    console.log('Données du formulaire:', stepData);
-                    setIsModalOpen(false);
-                }}
+                onCreate={handleStepCreated}
                 stepPosition={stepPosition}
                 tournamentId={tournamentId}
             />
