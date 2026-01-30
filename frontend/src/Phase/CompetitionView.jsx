@@ -48,7 +48,7 @@ export default function CompetitionView({
                         className="btn-setup" 
                         onClick={() => setIsSetupMode(!isSetupMode)}
                     >
-                        {isSetupMode ? 'Annuler' : 'Configurer'}
+                        {isSetupMode ? 'Modifier' : 'Configurer'}
                     </button>
                     
                     <button 
