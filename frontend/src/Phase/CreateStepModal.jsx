@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './CreateStepModal.css';
 
 const STEP_COMPONENT_TYPES = [
@@ -18,7 +18,7 @@ export default function CreateStepModal({ isOpen, onClose, onCreate, stepPositio
     const [numRounds, setNumRounds] = useState(3); // 2^3 = 8 joueurs
     const [isTwoLegged, setIsTwoLegged] = useState(false);
     const [numGroups, setNumGroups] = useState(1);
-    const [brFormat, setBrFormat] = useState('points'); // 'points' ou 'last_man'
+    const [brFormat] = useState('points'); // 'points' ou 'last_man'
 
     // Synchronisation Arbre : Rounds <-> Joueurs
     const handleRoundChange = (val) => {

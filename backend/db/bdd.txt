@@ -98,3 +98,6 @@ DROP CONSTRAINT takes_place_in_br_pkey;
 
 ALTER TABLE public.takes_place_in_br
 ADD CONSTRAINT takes_place_in_br_pkey PRIMARY KEY (id);
+
+ALTER TABLE public.takes_place_in_br
+ALTER COLUMN player_id DROP NOT NULL;
