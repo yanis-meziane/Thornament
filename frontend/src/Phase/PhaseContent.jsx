@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CreateStepModal from './CreateStepModal';
 import CompetitionView from './CompetitionView';
 import './PhaseContent.css';
@@ -8,10 +8,10 @@ export default function PhaseContent({ phase, stepPosition, tournamentId, onStep
     const [steps, setSteps] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    /* Charger les steps du tournoi
+    // Charger les steps du tournoi
     useEffect(() => {
         fetchSteps();
-    }, [tournamentId, stepPosition]);*/
+    }, [tournamentId, stepPosition]);
 
     const fetchSteps = async () => {
         if (!tournamentId) return;

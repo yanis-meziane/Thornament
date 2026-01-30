@@ -15,6 +15,7 @@
 
 .bracket-container {
     display: flex;
+    flex-direction: row;
     gap: 3rem;
     overflow-x: auto;
     padding: 1rem;
@@ -26,6 +27,7 @@
 .bracket-level {
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     gap: 1rem;
     min-width: 250px;
     flex-shrink: 0;

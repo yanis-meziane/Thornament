@@ -13,9 +13,8 @@ export default function TreeBracket({ matches = [], tournamentName = '' }) {
     // Organiser les matchs par niveau (round)
     const levels = {};
     matches.forEach(match => {
-        const level = Math.floor(Math.log2(matches.length - match.id + 1)) || 0;
-        if (!levels[level]) levels[level] = [];
-        levels[level].push(match);
+        if (!levels[match.round]) levels[match.round] = [];
+        levels[match.round].push(match);
     });
 
     const sortedLevels = Object.keys(levels)
