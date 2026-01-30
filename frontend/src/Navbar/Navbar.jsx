@@ -10,7 +10,7 @@ export default function Navbar({ title, isConnected = false }) {
 
     return (
         <nav className="navbar">
-            <div className="navbar-left">
+            <div>
                 {showBackButton && (
                     <button className="btn-back" onClick={() => navigate(-1)} title="Retour">
                         Accueil
@@ -18,13 +18,10 @@ export default function Navbar({ title, isConnected = false }) {
                 )}
             </div>
             
-            <div className="navbar-center">
+            <div>
                 <h1>{title}</h1>
             </div>
-            
-            <div className="navbar-right">
-                {/* Espace réservé pour la symétrie */}
-            </div>
+
         </nav>
     );
 }
