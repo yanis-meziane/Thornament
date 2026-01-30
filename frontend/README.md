@@ -24,7 +24,7 @@ npm install
 
 3. *Création de la BDD* 
 
-Il sera nécessaire de copier les éléments de ????  
+Il sera nécessaire de copier les éléments de /backend/db/bdd.txt dans un documetn de psotgreSQL et de configurer votre connexion.  
 
 4. *Lancement du projet*
 
