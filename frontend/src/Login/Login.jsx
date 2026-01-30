@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import './Login.css';
 
 export default function Login(){
@@ -8,6 +8,13 @@ export default function Login(){
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
+    
+    // Nettoyer le localStorage au chargement de la page de connexion
+    useEffect(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userMail');
+    }, []);
     
     const LOGIN_ENDPOINT = {
         url: 'http://localhost:3001/api/auth/login',
@@ -21,7 +28,6 @@ export default function Login(){
         e.preventDefault();
         setError('');
         setSuccess('');
-
 
         const requestBody = {
             mail: mail,
@@ -60,18 +66,19 @@ export default function Login(){
     };
     
     return(
-        <div className="connexion-container">
+        <div className="login-container">
             <h1>Se connecter</h1>
-            <form onSubmit={handleSubmit} id="formConnexion">
-                {error && <p className="error-message">{error}</p>}
-                {success && <p className="success-message">{success}</p>}
+            <form onSubmit={handleSubmit} className="login-form">
+                {error && <p className="error-message" style={{color: 'red'}}>{error}</p>}
+                {success && <p className="success-message" style={{color: 'green'}}>{success}</p>}
                 
-                <div id="divEmail">
+                <div className="form-group">
                     <label htmlFor="mail">Email : </label>
                     <input 
                         type="email" 
                         name="mail" 
                         id="mail" 
+                        className="form-input"
                         placeholder="Votre email..." 
                         minLength={5} 
                         maxLength={50}
@@ -81,12 +88,13 @@ export default function Login(){
                     />
                 </div>
 
-                <div id="divPassword">
+                <div className="form-group">
                     <label htmlFor="password">Mot de passe : </label>
                     <input 
                         type="password" 
                         name="password" 
                         id="password" 
+                        className="form-input"
                         placeholder="Password..." 
                         minLength={12} 
                         maxLength={20} 
@@ -96,7 +104,7 @@ export default function Login(){
                     />
                 </div>
 
-                <button type="submit" id="submitConnexion">Se connecter</button>
+                <button type="submit" className="login-submit">Se connecter</button>
 
                 <p>Si vous n'avez pas de compte, inscrivez-vous <Link to={'/'}>ici</Link></p>
             </form>

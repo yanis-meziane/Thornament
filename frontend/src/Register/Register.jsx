@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import './Register.css';
 
 export default function Register(){
@@ -9,6 +9,13 @@ export default function Register(){
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
+
+    // Nettoyer le localStorage au chargement de la page d'inscription
+    useEffect(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userMail');
+    }, []);
 
     const REGISTER_ENDPOINT = {
         url: 'http://localhost:3001/api/auth/register',
@@ -81,8 +88,9 @@ export default function Register(){
                 {error && <p className="error-message" style={{color: 'red'}}>{error}</p>}
                 {success && <p className="success-message" style={{color: 'green'}}>{success}</p>}
                 
-                <div id="divEmail">
+                <div id="divEmail" className="labelRegister">
                     <label htmlFor="email">Email : </label>
+                <br />
                     <input 
                         type="email" 
                         name="email" 
@@ -93,11 +101,13 @@ export default function Register(){
                         value={mail}
                         onChange={(e) => setMail(e.target.value)}
                         required
+                        className="inputRegister"
                     />
                 </div>
 
-                <div id="divPassword">
+                <div id="divPassword" className="labelRegister">
                     <label htmlFor="password">Mot de passe : </label>
+                    <br />
                     <input 
                         type="password" 
                         name="password" 
@@ -108,11 +118,13 @@ export default function Register(){
                         value={password} 
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        className="inputRegister"
                     />
                 </div>
 
                 <div id="divConfirmPassword">
-                    <label htmlFor="confirmPassword">Confirmer le mot de passe : </label>
+                    <label htmlFor="confirmPassword" className="labelRegister">Confirmer le mot de passe : </label>
+                    <br />
                     <input 
                         type="password" 
                         name="confirmPassword" 
@@ -122,7 +134,8 @@ export default function Register(){
                         maxLength={20} 
                         value={confirmPassword} 
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
+                        required  
+                        className="inputRegister"
                     />
                 </div>
 

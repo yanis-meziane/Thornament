@@ -1,4 +1,4 @@
- *{ 
+*{ 
     font-family: 'Times New Roman', Times, serif;
  }
  
@@ -35,6 +35,8 @@
     flex: 1;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
 }
 
 .btn-back {
@@ -58,10 +60,32 @@
     transform: scale(0.98);
 }
 
+.btn-logout {
+    padding: 0.6rem 1.2rem;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-family: Arial, sans-serif;
+}
+
+.btn-logout:hover {
+    background-color: #da190b;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+.btn-logout:active {
+    transform: scale(0.98);
+}
 
 #logoApp{
     height: 50px;
     border-radius: 50px;
+    cursor: pointer;
 }
 
 #buttonAccueil{
@@ -71,6 +95,8 @@
     height: 4vh;
     border-radius: 2vh;
     color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 #buttonAccueil:hover{

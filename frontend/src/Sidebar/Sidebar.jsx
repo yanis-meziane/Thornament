@@ -15,6 +15,18 @@ export default function Sidebar() {
         setIsOpen(false);
     };
 
+    const handleLogout = () => {
+        // Supprimer toutes les données de l'utilisateur du localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userMail');
+        
+        
+        // Rediriger vers la page de connexion
+        navigate('/login');
+        setIsOpen(false);
+    };
+
     return (
         <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
             <button className="sidebar-toggle" onClick={toggleSidebar}>
@@ -27,7 +39,7 @@ export default function Sidebar() {
                             Vos Tournois
                         </li>
 
-                        <li onClick={()=> handleNavigate('/')}>
+                        <li onClick={handleLogout}>
                             Se déconnecter
                         </li>
                     </ul>
