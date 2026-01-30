@@ -15,9 +15,9 @@ const createBR = async (req, res, next) => {
 
     const user = req.user;
 
-    if (!player_id) {
-      return res.status(400).json({ message: "player_id must exist"});
-    }
+    // if (!player_id) {
+    //   return res.status(400).json({ message: "player_id must exist"});
+    // }
     if (!step_id) {
       return res.status(400).json({ message: "step_id must exist"});
     }
@@ -31,11 +31,13 @@ const createBR = async (req, res, next) => {
 
     //tdo : add verification player isn't already in the step.
     //tdo : add verification step isn't full already.
-
-    const br = await createBRRepository(
+    let data = {
       player_id,
       step_id,
       value,
+    }
+    const br = await createBRRepository(
+      data,
       user.id
     )
     

@@ -2,9 +2,7 @@ import db from '../db/db.js';
 
 // br
 export async function createBRRepository(      
-  player_id,
-  br_id,
-  value,
+  data,
   user_id
 ) {
   return db.one(
@@ -13,9 +11,9 @@ export async function createBRRepository(
     VALUES($1, $2, $3, $4)
     RETURNING id, player_id, br_id, value`,
     [
-      player_id,
-      br_id,
-      value,
+      data.player_id,
+      data.step_id,
+      data.value,
       user_id
     ])
     .then(data => {

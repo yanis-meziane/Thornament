@@ -5,6 +5,7 @@ import tournamentRoutes from './tournamentRoutes.js';
 import stepRoutes from './stepRoutes.js';
 import playerRoutes from './playerRoutes.js';
 import stepComponentRoutes from './stepComponentRoutes.js';
+import aiRoutes from './aiRoutes.js';
 
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.use('/tournament', tournamentRoutes);
 router.use('/step', stepRoutes);
 router.use('/player', playerRoutes);
 router.use('/step-component', stepComponentRoutes);
+router.use('/ai', aiRoutes);
 
 export default router;

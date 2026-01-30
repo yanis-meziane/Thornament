@@ -11,11 +11,13 @@
     "start": "nodemon index.js"
   },
   "dependencies": {
+    "@openai/agents": "^0.4.4",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "pg-promise": "^12.3.0"
+    "pg-promise": "^12.3.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
