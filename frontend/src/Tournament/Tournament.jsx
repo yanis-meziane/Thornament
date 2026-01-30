@@ -153,7 +153,6 @@ export default function Tournament() {
                                     <div key={tournoi.id} className="tournoi-card">
                                         <h3>{tournoi.name}</h3>
                                         <p className="tournoi-description">{tournoi.description}</p>
-                                        <p className="tournoi-status">Status: {tournoi.status}</p>
                                         <div className="tournoi-actions">
                                             <button className="btn-action btn-open" onClick={() => navigate(`/tournament/${tournoi.id}`)}>
                                                 Ouvrir
