@@ -59,3 +59,21 @@
 }
 
 
+#logoApp{
+    height: 50px;
+    border-radius: 50px;
+}
+
+#buttonAccueil{
+    background-color:#2C2C2C;
+    border: none;
+    width: 10vh;
+    height: 4vh;
+    border-radius: 2vh;
+    color: white;
+}
+
+#buttonAccueil:hover{
+    background-color: #FFFFFF;
+    color: black;
+}

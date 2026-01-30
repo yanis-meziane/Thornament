@@ -1,12 +1,12 @@
 import { useNavigate} from 'react-router-dom';
 import './Navbar.css';
 
-export default function Navbar({ title, isConnected = false }) {
+export default function Navbar({ title = false }) {
     const navigate = useNavigate();
     return (
         <nav className="navbar">
             <div>
-                    <button onClick={() => navigate("/home")}>
+                    <button onClick={() => navigate("/home")} id='buttonAccueil'>
                         Accueil
                     </button>
             </div>
@@ -16,7 +16,7 @@ export default function Navbar({ title, isConnected = false }) {
             </div>
 
             <div>
-                <img src='./public/thornament.png' alt='Logo'></img>
+                <img src='/thornament.png' alt='Logo' id='logoApp'  onClick={() => navigate("/home")}></img>
             </div>
         </nav>
     );
