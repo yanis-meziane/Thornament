@@ -45,12 +45,30 @@ export default function Tournament() {
 
             setTournamentName(data.tournament.name);
             
-            // TODO: Récupérer les phases du tournoi depuis le backend
-            // Pour maintenant, initialiser avec une phase vierge
-            setPhases([
-                { id: 1, name: 'Phase 1', instances: [] }
-            ]);
-            setActivePhaseId(1);
+            // Récupérer toutes les steps du tournoi
+            const stepsResponse = await fetch(`http://localhost:3001/api/step/tournament/${id}`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            const stepsData = await stepsResponse.json();
+
+            if (stepsResponse.ok && stepsData.steps) {
+                // Extraire les phases uniques à partir des steps
+                const uniquePhases = [...new Set(stepsData.steps.map(step => step.step_position))];
+                const phasesArray = uniquePhases.map(position => ({
+                    id: position,
+                    name: `Phase ${position}`,
+                    instances: []
+                }));
+
+                setPhases(phasesArray.length > 0 ? phasesArray : [{ id: 1, name: 'Phase 1', instances: [] }]);
+                setActivePhaseId(phasesArray.length > 0 ? phasesArray[0].id : 1);
+            } else {
+                // Initialiser avec une phase par défaut
+                setPhases([{ id: 1, name: 'Phase 1', instances: [] }]);
+                setActivePhaseId(1);
+            }
         } catch (error) {
             console.error('Erreur:', error);
             setError('Erreur de connexion au serveur');
@@ -62,6 +80,56 @@ export default function Tournament() {
     useEffect(() => {
         fetchTournamentData();
     }, [fetchTournamentData]);
+
+    const addPhase = () => {
+        const newPhaseId = Math.max(...phases.map(p => p.id), 0) + 1;
+        setPhases([...phases, { id: newPhaseId, name: `Phase ${newPhaseId}`, instances: [] }]);
+    };
+
+    const deletePhase = async (phaseId) => {
+        if (phases.length <= 1) {
+            alert('Impossible de supprimer la dernière phase');
+            return;
+        }
+
+        try {
+            // Récupérer toutes les steps de cette phase
+            const stepsResponse = await fetch(`http://localhost:3001/api/step/tournament/${id}`, {
+                method: 'GET',
+                headers: getAuthHeaders()
+            });
+
+            const stepsData = await stepsResponse.json();
+
+            if (stepsResponse.ok && stepsData.steps) {
+                const phaseSteps = stepsData.steps.filter(step => step.step_position === phaseId);
+
+                // Supprimer toutes les steps de cette phase
+                const deletePromises = phaseSteps.map(step =>
+                    fetch(`http://localhost:3001/api/step/${step.id}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                    })
+                );
+
+                await Promise.all(deletePromises);
+            }
+
+            // Mettre à jour l'état local
+            const updatedPhases = phases.filter(p => p.id !== phaseId);
+            setPhases(updatedPhases);
+
+            // Si la phase active est supprimée, basculer vers la première phase restante
+            if (activePhaseId === phaseId) {
+                setActivePhaseId(updatedPhases[0].id);
+            }
+
+            alert('Phase supprimée avec succès');
+        } catch (error) {
+            console.error('Erreur lors de la suppression de la phase:', error);
+            alert('Erreur lors de la suppression de la phase');
+        }
+    };
 
     if (loading) {
         return (
@@ -88,11 +156,6 @@ export default function Tournament() {
 
     const activePhase = phases.find(phase => phase.id === activePhaseId);
 
-    const addPhase = () => {
-        const newPhaseId = Math.max(...phases.map(p => p.id), 0) + 1;
-        setPhases([...phases, { id: newPhaseId, name: `Phase ${newPhaseId}`, instances: [] }]);
-    };
-
     return (
         <div className="tournament-page">
             <Navbar title={tournamentName} isConnected={true} />
@@ -102,6 +165,7 @@ export default function Tournament() {
                     phases={phases} 
                     activePhaseId={activePhaseId}
                     onPhaseSelect={setActivePhaseId}
+                    onPhaseDelete={deletePhase}
                 />
                 
                 {activePhase && (

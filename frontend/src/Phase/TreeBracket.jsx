@@ -1,17 +1,6 @@
 import React from 'react';
 import './TreeBracket.css';
 
-/**
- * Composant TreeBracket pour afficher un arbre éliminatoire
- * Utilise une approche SVG/CSS personnalisée pour plus de contrôle
- * 
- * Structure attendue pour les matchs:
- * [
- *   { id: 1, player1: 'Player A', player2: 'Player B', winner: 'Player A' },
- *   ...
- * ]
- */
-
 export default function TreeBracket({ matches = [], tournamentName = '' }) {
     if (!matches || matches.length === 0) {
         return (
