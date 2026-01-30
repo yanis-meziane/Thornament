@@ -16,7 +16,8 @@ export default function CompetitionView({
     numberOfPlayers = 8,
     numberOfGroups = 2,
     participants = [],
-    matches = []
+    matches = [],
+    onDelete = []
 }) {
     const [isSetupMode, setIsSetupMode] = useState(false);
     const [config, setConfig] = useState({
@@ -42,12 +43,21 @@ export default function CompetitionView({
         <div className="competition-view">
             <div className="competition-header">
                 <h2>{stepName || 'Compétition'}</h2>
-                <button 
-                    className="btn-setup"
-                    onClick={() => setIsSetupMode(!isSetupMode)}
-                >
-                    {isSetupMode ? '✓ Fait' : '⚙️ Configurer'}
-                </button>
+                <div className="header-actions"> {/* Conteneur pour les boutons */}
+                    <button 
+                        className="btn-setup" 
+                        onClick={() => setIsSetupMode(!isSetupMode)}
+                    >
+                        {isSetupMode ? 'Annuler' : 'Configurer'}
+                    </button>
+                    
+                    <button 
+                        className="btn-delete-step" 
+                        onClick={onDelete}
+                    >
+                        Supprimer
+                    </button>
+                </div>
             </div>
 
             {isSetupMode ? (

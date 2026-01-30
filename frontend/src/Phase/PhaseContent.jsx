@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import CreateStepModal from './CreateStepModal';
 import CompetitionView from './CompetitionView';
 import './PhaseContent.css';
@@ -8,10 +8,10 @@ export default function PhaseContent({ phase, stepPosition, tournamentId, onStep
     const [steps, setSteps] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Charger les steps du tournoi
+    /* Charger les steps du tournoi
     useEffect(() => {
         fetchSteps();
-    }, [tournamentId, stepPosition]);
+    }, [tournamentId, stepPosition]);*/
 
     const fetchSteps = async () => {
         if (!tournamentId) return;
@@ -77,6 +77,30 @@ export default function PhaseContent({ phase, stepPosition, tournamentId, onStep
         }
     };
 
+    const handleDeleteStep = async (stepId) => {
+    if (!window.confirm("Voulez-vous vraiment supprimer cette étape ?")) return;
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:3001/api/step/${stepId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            setSteps(prevSteps => prevSteps.filter(s => s.id !== stepId));
+        } else {
+            const data = await response.json();
+            alert(data.message || "Erreur lors de la suppression");
+        }
+    } catch (error) {
+        console.error("Erreur:", error);
+        alert("Impossible de contacter le serveur");
+    }
+};
+
     return (
         <div className="phase-content">
             <div className="phase-container">
@@ -111,6 +135,7 @@ export default function PhaseContent({ phase, stepPosition, tournamentId, onStep
                                     numberOfGroups={Math.ceil(step.number_players / 4)} // À adapter selon les besoins
                                     participants={[]}
                                     matches={[]}
+                                    onDelete={() => handleDeleteStep(step.id)}
                                 />
                             ))}
                         </div>
