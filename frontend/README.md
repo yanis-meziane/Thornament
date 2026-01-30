@@ -18,7 +18,7 @@ git clone https://github.com/yanis-meziane/Thornament.git
 2. *Installation des dépendances* 
 
 ```git 
-cd Startup-week
+cd thornament
 npm install 
 ```
 
