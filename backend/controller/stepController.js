@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken"
 import {
   createStepRepository,
   createStepSettingsRepository,
+  deleteStepRepository,
   getAllStepsRepository,
   getStepByIdRepository,
   updateSettingsRepository
@@ -217,6 +218,22 @@ const getAllStepComponentById = async (req, res, next) => {
   }
 }
 
+const deleteStep = async (req, res, next) => {
+  try {
+    const step_id = req.params.id;
+
+    const user = req.user;
+
+    let step = await deleteStepRepository(step_id, user.id);
+
+    return res.status(200).json({
+      message: "Steps deleted successfully",
+    });
+  } catch (e) {
+    console.error("Error during steps retrieval:", e);
+    return res.status(500).json({ message: "Erreur lors de la récupération des l'etapes", error: e.message });
+  }
+}
 
 
 export default {
@@ -226,4 +243,5 @@ export default {
   getAllStepsByTournamentId,
   modifySettings,
   getAllStepComponentById,
+  deleteStep,
 }

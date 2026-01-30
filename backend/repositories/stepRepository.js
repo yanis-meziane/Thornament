@@ -153,3 +153,27 @@ export async function updateSettingsRepository(
     });
 };
 
+export async function deleteStepRepository(
+  step_id,
+  user_id
+) {  
+  let params = [user_id, step_id];
+
+  let query = `
+    DELETE
+    FROM "step"
+    WHERE created_by = $1
+    AND id = $2`;
+
+  return db.none(
+    query,
+    params
+  )
+    .then(data => {
+        return data;
+    })
+    .catch(error => {
+        console.error("Error during step_settings creation : ", error)
+        throw new Error(error); 
+    });
+};

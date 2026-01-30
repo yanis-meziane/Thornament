@@ -121,9 +121,9 @@ const createVersus = async (req, res, next) => {
 
     const user = req.user;
 
-    if (!data.player1_id || !data.player2_id) {
-      return res.status(400).json({ message: "player1_id and player1_id must exist"});
-    }
+    // if (!data.player1_id || !data.player2_id) {
+    //   return res.status(400).json({ message: "player1_id and player1_id must exist"});
+    // }
     if (!data.step_id) {
       return res.status(400).json({ message: "step_id must exist"});
     }
@@ -228,9 +228,9 @@ const createVersusTree = async (req, res, next) => {
 
     const user = req.user;
 
-    if (!data.player1_id || !data.player2_id) {
-      return res.status(400).json({ message: "player1_id and player1_id must exist"});
-    }
+    // if (!data.player1_id || !data.player2_id) {
+    //   return res.status(400).json({ message: "player1_id and player1_id must exist"});
+    // }
     if (!data.tree_position) {
       return res.status(400).json({ message: "tree_position must exist"});
     }
