@@ -4,13 +4,15 @@
  
 .navbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     padding: 1rem 2rem;
     background-color: #2C2C2C;
     height: 60px;
     font-family: Arial, sans-serif;
     color: #FFFFFF;
+    position: fixed;
+    width: 100%;
 }
 
 .navbar-left {

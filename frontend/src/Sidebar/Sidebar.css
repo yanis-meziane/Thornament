@@ -1,9 +1,9 @@
 .sidebar {
     position: fixed;
     left: 0;
-    top: 60px;
+    top: 92px;
     height: calc(100vh - 60px);
-   background-color: #979595;
+    background-color: #979595;
     width: 60px;
     transition: width 0.3s ease;
     z-index: 1000;
@@ -51,8 +51,7 @@
 }
 
 .sidebar-nav li:hover {
-    background-color: #C1D0FF;
-    border-left-color: #9B9EF0;
+    background-color: whitesmoke;
     color: black;
-    width: 100%;
+    width: 80%;
 }

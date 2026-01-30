@@ -11,6 +11,7 @@ export default function PhaseContent({ phase, stepPosition, tournamentId, onStep
     // Charger les steps du tournoi
     useEffect(() => {
         fetchSteps();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tournamentId, stepPosition]);
 
     const fetchSteps = async () => {
